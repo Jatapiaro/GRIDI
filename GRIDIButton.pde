@@ -1,61 +1,75 @@
 class GRIDIButton {
 
-  boolean on;
-  boolean hv;
-  PVector pos;
-  color clr;
-  PVector size;
+  color buttonColor;
+  boolean hover, on;
+  PVector position, size;
   int beat;
 
-  //-------------------------------------------------
-  GRIDIButton(PVector _pos, PVector _size, color _clr, int _beat) {
+  /**
+  * Constructor
+  * @param PVector position where this button is
+  * @param PVector size of this button
+  * @param PVector buttonColor for this button
+  * @param int beat the beat that corresponds to this button
+  */
+  GRIDIButton(PVector position, PVector size, color buttonColor, int beat) {
 
-    on = false;
-    pos = _pos;
-    size= _size;
-    clr = _clr;
-    hv = false;
-    beat = _beat;
-    
+    this.on = hover = false;
+    this.position = position;
+    this.size = size;
+    this.buttonColor = buttonColor;
+    this.beat = beat;
   }
-  //-------------------------------------------------
+  
+  /**
+  * If the mouse is inside the button
+  * we click on it, we set the button as on
+  */
   void toggle() {
-    if (mouseX > pos.x && mouseX < (pos.x + size.x)) {
-      if (mouseY> pos.y && mouseY < (pos.y + size.y)) {
+    if (mouseX > this.position.x && mouseX < (this.position.x + size.x)) {
+      if (mouseY> this.position.y && mouseY < (this.position.y + size.y)) {
         on = !on;
       }
     }
   }
 
-  //-------------------------------------------------
+  /**
+  * If the mouse is inside the button
+  * we put the button state has hover
+  */
   void hoover() {
     
-    hv = false;
+    this.hover = false;
     
-    if (mouseX > pos.x && mouseX < (pos.x + size.x)) {
-      if (mouseY> pos.y && mouseY < (pos.y + size.y)) {
-        hv = true;
+    if (mouseX > this.position.x && mouseX < (this.position.x + size.x)) {
+      if (mouseY> this.position.y && mouseY < (this.position.y + size.y)) {
+        this.hover = true;
       }
     }
   }
 
 
-  //-------------------------------------------------
+  /**
+  * Draws the button
+  */
   void draw() {
-    if (on) {
-      fill(clr);
-      rect(pos.x, pos.y, size.x, size.y, 15);
+    
+    if (this.on) {
+      fill(this.buttonColor);
+      rect(this.position.x, this.position.y, size.x, size.y, 15);
     } else {
       noFill();
-      rect(pos.x, pos.y, size.x, size.y, 15);
+      rect(this.position.x, this.position.y, size.x, size.y, 15);
     }
 
-    if (hv) {
-      fill(clr, 80);
-      rect(pos.x, pos.y, size.x, size.y, 15);
+    if (this.hover) {
+      fill(this.buttonColor, 80);
+      rect(this.position.x, this.position.y, size.x, size.y, 15);
     } else {
       noFill();
-      rect(pos.x, pos.y, size.x, size.y, 15);
+      rect(this.position.x, this.position.y, size.x, size.y, 15);
     }
+  
   }
+  
 }
