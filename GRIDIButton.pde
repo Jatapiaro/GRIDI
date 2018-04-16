@@ -3,7 +3,8 @@ class GRIDIButton {
   color buttonColor;
   boolean hover, on;
   PVector position, size;
-  int beat;
+  int beat, channel;
+  float top, bottom, left, right;
 
   /**
   * Constructor
@@ -12,13 +13,23 @@ class GRIDIButton {
   * @param PVector buttonColor for this button
   * @param int beat the beat that corresponds to this button
   */
-  GRIDIButton(PVector position, PVector size, color buttonColor, int beat) {
+  GRIDIButton(PVector position, PVector size, color buttonColor, int beat, int channel) {
 
     this.on = hover = false;
     this.position = position;
     this.size = size;
     this.buttonColor = buttonColor;
     this.beat = beat;
+    this.channel = channel;
+    this.initializeDimentions();
+    
+  }
+  
+  void initializeDimentions() {
+    this.left = this.position.x;
+    this.right = this.position.x + this.size.x;
+    this.top = this.position.y;
+    this.bottom = this.position.y + this.size.y;
   }
   
   /**
@@ -70,6 +81,21 @@ class GRIDIButton {
       rect(this.position.x, this.position.y, size.x, size.y, 15);
     }
   
+  }
+  
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("["+this.position.x+",");
+    sb.append(this.position.y+"]");
+    return sb.toString();
+  }
+  
+  public boolean onCollisionEnter(GRIDIButton o) {
+    return !(this.position.x > o.position.x || 
+      this.right < o.left || 
+      this.top > o.bottom || 
+      this.bottom < o.top);
   }
   
 }
