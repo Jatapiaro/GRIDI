@@ -5,6 +5,7 @@ class GRIDIButton {
   PVector position, size;
   int beat, channel;
   float top, bottom, left, right;
+  String id;
 
   /**
   * Constructor
@@ -22,9 +23,17 @@ class GRIDIButton {
     this.beat = beat;
     this.channel = channel;
     this.initializeDimentions();
-    
+    this.id = channel+"-"+beat;  
   }
   
+  GRIDIButton( String id ) {
+    this.id = id;
+  }
+  
+  /**
+  * Initialize the auxiliar variables to handle
+  * the collision detection
+  */
   void initializeDimentions() {
     this.left = this.position.x;
     this.right = this.position.x + this.size.x;
@@ -86,11 +95,25 @@ class GRIDIButton {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("["+this.position.x+",");
-    sb.append(this.position.y+"]");
+    if ( this.position != null ) {
+      sb.append("["+this.position.x+",");
+      sb.append(this.position.y+"]");
+    } else {
+      sb.append("ID: "+id);
+    }
     return sb.toString();
   }
   
+  @Override
+  public boolean equals(Object o){
+    GRIDIButton other = (GRIDIButton)o;
+    return this.id.equals(other.id);
+  }
+  
+  /**
+  * Check if another object is colliding with this object
+  * @param GRIDIButton o, the other object to be checked
+  */
   public boolean onCollisionEnter(GRIDIButton o) {
     return !(this.position.x > o.position.x || 
       this.right < o.left || 

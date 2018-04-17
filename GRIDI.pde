@@ -8,6 +8,7 @@ CountdownTimer timer;
 
 GRIDIButton[][] buttons;
 List<GRIDIButton> buttonList;
+List<GRIDIButton> hoveredButtons;
 int buttonWidth, buttonHeight, beats, channels, currentTick;
 
 /*
@@ -35,6 +36,7 @@ void setup() {
 
 void variableSetup() {
   this.buttonList = new ArrayList<GRIDIButton>();
+  this.hoveredButtons = new ArrayList<GRIDIButton>();
   this.currentTick = 0;
   this.beats = 16;
   this.channels = 8;
@@ -59,6 +61,7 @@ void setupButtons() {
 
 void draw() {
   background(0);
+  this.drawTuioObjects();
   for (int i = 0; i< beats+1; i++) {
     stroke(0, 179, 179);
     line(i*this.buttonWidth, 0, i*this.buttonWidth, height);
@@ -70,13 +73,22 @@ void draw() {
 
   fill(179, 0, 179, 80);
   rect(this.currentTick*this.buttonWidth, 0, this.buttonWidth, height, 15);  
-  for ( int y = 0; y < 8; y++ ) {
-    for ( int x = 0; x < 16; x++ ) {
-      buttons[x][y].draw();
+  for ( GRIDIButton btn : this.buttonList ) {
+    GRIDIButton aux = null;
+    for ( GRIDIButton b : this.hoveredButtons ) {
+      if ( btn.equals(b) ) {
+        btn.hover = true;
+        aux = new GRIDIButton(b.id);
+        break;
+      } else {
+        btn.hover = false;
+      }
+      if (aux != null) {
+        this.hoveredButtons.remove(aux);
+      }
     }
+    btn.draw();
   }
-  
-  this.drawTuioObjects();
 }
 
 void onTickEvent(CountdownTimer t, long timeLeftUntilFinish) {
@@ -128,7 +140,7 @@ void tuioSetup() {
 }
 
 void drawTuioObjects() {
-  
+  this.hoveredButtons = new ArrayList<GRIDIButton>();
   float obj_size = object_size*scale_factor; 
   ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
   for (int i=0; i < tuioObjectList.size(); i++) {
@@ -137,13 +149,14 @@ void drawTuioObjects() {
     fill(1,1,1);
     pushMatrix();
     {
+      fill(255, 255, 255);
       translate(tobj.getScreenX(width),tobj.getScreenY(height));
       rotate(tobj.getAngle());
       rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
     }
     popMatrix();
     
-    fill(255, 255, 255);
+    fill(0, 0, 0);
     text(
       ""+tobj.getSymbolID(), 
       tobj.getScreenX(width), 
@@ -162,19 +175,15 @@ void drawTuioObjects() {
     );
     for ( GRIDIButton gb : this.buttonList ) {
       boolean res = gb.onCollisionEnter(b);
-      if( res ) {
-        println(res);
-      }
-    }
-    /*
-    CustomRect cr = new CustomRect(defX, defY, defX+obj_size, obj_size, -1, -1);
-    for ( CustomRect r : this.gridRects ) {
-      boolean b = r.onCollisionEnter(cr);
-      if ( b == true ) {
-        //println("Collide with: "+r.row+" -> "+r.col);
+      if ( res ) {
+        GRIDIButton aux = new GRIDIButton(gb.id);
+        if ( !this.hoveredButtons.contains(aux) ){
+          this.hoveredButtons.add(aux);
+        }
+        println(hoveredButtons);
         break;
       }
-    }*/
+    }
   }
 }
 
