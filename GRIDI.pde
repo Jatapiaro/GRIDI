@@ -60,8 +60,15 @@ void setupButtons() {
 }
 
 void draw() {
+  
   background(0);
   this.drawTuioObjects();
+  this.drawGrid();
+  
+}
+
+void drawGrid() {
+  
   for (int i = 0; i< beats+1; i++) {
     stroke(0, 179, 179);
     line(i*this.buttonWidth, 0, i*this.buttonWidth, height);
@@ -73,22 +80,30 @@ void draw() {
 
   fill(179, 0, 179, 80);
   rect(this.currentTick*this.buttonWidth, 0, this.buttonWidth, height, 15);  
-  for ( GRIDIButton btn : this.buttonList ) {
-    GRIDIButton aux = null;
-    for ( GRIDIButton b : this.hoveredButtons ) {
-      if ( btn.equals(b) ) {
-        btn.hover = true;
-        aux = new GRIDIButton(b.id);
-        break;
-      } else {
-        btn.hover = false;
-      }
-      if (aux != null) {
-        this.hoveredButtons.remove(aux);
-      }
-    }
-    btn.draw();
+  for ( GRIDIButton b : this.buttonList ) {
+    this.checkIfButtonIsHovered(b);
+    b.draw();
   }
+  
+}
+
+void checkIfButtonIsHovered(GRIDIButton btn) {
+  
+  GRIDIButton aux = null;
+  for ( GRIDIButton b : this.hoveredButtons ) {
+    if ( btn.equals(b) ) {
+      btn.hover = true;
+      aux = new GRIDIButton(b.id);
+      break;
+    } else {
+      btn.hover = false;
+    }
+    
+    if (aux != null) {
+      this.hoveredButtons.remove(aux);
+    }
+  }
+  
 }
 
 void onTickEvent(CountdownTimer t, long timeLeftUntilFinish) {
