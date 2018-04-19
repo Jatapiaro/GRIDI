@@ -23,7 +23,8 @@ public enum ScalesEnum {
     NAIRUZ(new int[] { 0, 4, 7, 10, 14, 17, 20 }),
     PURVI(new int[] { 0, 1, 4, 6, 7, 8, 11 }),
     RAST(new int[] { 0, 4, 7, 10, 14, 18, 21 }),
-    TODI(new int[] { 0, 1, 3, 6, 7, 8, 11 });
+    TODI(new int[] { 0, 1, 3, 6, 7, 8, 11 }),
+    DRUMS( new int[] {35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45} );
 
     private int[] scale;
 

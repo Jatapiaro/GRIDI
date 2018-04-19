@@ -11,6 +11,7 @@ public class Fiducial {
   private PVector position;
   private int lastUpdatedTick;
   public boolean readyToProduceSound;
+  private int channelOfDrums = 5;
   
   public Fiducial(int id){
     this.id = id;
@@ -44,6 +45,21 @@ public class Fiducial {
   
   private void mapNoteFromRotation(boolean first, float rotation) {
     
+    if ( this.channel < this.channelOfDrums ) {
+      this.mapNoteForSynth(first, rotation);
+    } else {
+      this.mapNoteForDrums(rotation);
+    }
+    
+  }
+  
+ private void mapNoteForDrums(float rotation) {
+   int mapRotation = (int)map(this.rotation, 0, 360, 0, this.scale.length);
+   this.note = scale[mapRotation];
+   this.midiBusNote.setPitch(this.note);   
+ }
+  
+  private void mapNoteForSynth(boolean first, float rotation) {
     if ( first ) {
       int mapRotation = (int)map(this.rotation, 0, 360, 0, this.scale.length);
       this.note = 60 + scale[mapRotation];
@@ -57,8 +73,7 @@ public class Fiducial {
       int mapRotation = (int)map(this.rotation, 0, 360, 0, this.scale.length);
       this.midiBusNote.setPitch(this.note);
       this.note = 60 + scale[mapRotation];
-    }
-    
+    }  
   }
   
   public void updatePosition( PVector newPosition, int newTick ) {
@@ -79,11 +94,10 @@ public class Fiducial {
   }
   
   public void setChannel(int channel) {
-    /*
-    * TODO change the scale to a drum scale if the channel correpsonds 
-    * to one related to redrum or something
-    */
     this.channel = channel;
+    if ( this.channel > this.channelOfDrums ) {
+      this.scale = ScalesEnum.DRUMS.scale;
+    }
   }
   
   @Override

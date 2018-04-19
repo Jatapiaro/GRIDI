@@ -42,8 +42,8 @@ void variableSetup() {
   this.currentTick = 0;
   this.beats = 16;
   this.channels = 8;
-  this.buttonWidth = width/16;
-  this.buttonHeight = width/8;
+  this.buttonWidth = displayWidth/16;
+  this.buttonHeight = displayHeight/8;
   this.timer = CountdownTimerService.getNewCountdownTimer(this).configure(200, Integer.MAX_VALUE).start();
   
 }
@@ -155,7 +155,7 @@ void tuioSetup() {
 
 void drawTuioObjects() {
   //this.hoveredButtons = new ArrayList<GRIDIButton>();
-  println("Hovereds: "+this.hoveredButtons);
+  //println("Hovereds: "+this.hoveredButtons);
   float obj_size = object_size*scale_factor; 
   ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
   for (int i=0; i < tuioObjectList.size(); i++) {
