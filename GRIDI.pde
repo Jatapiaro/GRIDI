@@ -65,6 +65,7 @@ void setupButtons() {
 void draw() {
   
   background(0);
+  this.hoveredButtons.clear();
   this.drawTuioObjects();
   this.drawGrid();
   
@@ -84,27 +85,22 @@ void drawGrid() {
   fill(179, 0, 179, 80);
   rect(this.currentTick*this.buttonWidth, 0, this.buttonWidth, height, 15);  
   for ( GRIDIButton b : this.buttonList ) {
-    this.checkIfButtonIsHovered(b);
+    //this.checkIfButtonIsHovered(b);
     b.draw();
   }
+  
   
 }
 
 void checkIfButtonIsHovered(GRIDIButton btn) {
   
-  GRIDIButton aux = null;
   for ( GRIDIButton b : this.hoveredButtons ) {
     if ( btn.equals(b) ) {
       btn.hover = true;
-      aux = new GRIDIButton(b.id);
       break;
     } else {
       btn.hover = false;
-    }
-    
-    if (aux != null) {
-      this.hoveredButtons.remove(aux);
-    }
+    }   
   }
   
 }
@@ -159,7 +155,8 @@ void tuioSetup() {
 }
 
 void drawTuioObjects() {
-  this.hoveredButtons = new ArrayList<GRIDIButton>();
+  //this.hoveredButtons = new ArrayList<GRIDIButton>();
+  println("Hovereds: "+this.hoveredButtons);
   float obj_size = object_size*scale_factor; 
   ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
   for (int i=0; i < tuioObjectList.size(); i++) {
@@ -195,18 +192,26 @@ void drawTuioObjects() {
       new PVector(defX+obj_size, obj_size),
       0, 0, 0
     );
+    this.unhoverAll();
     for ( GRIDIButton gb : this.buttonList ) {
       boolean res = gb.onCollisionEnter(b);
       if ( res ) {
         //println(gb.beat);
         this.master.onCollisionIsReadyToProduceSound(tobj.getSymbolID(), gb.channel, gb.beat);
         GRIDIButton aux = new GRIDIButton(gb.id);
-        if ( !this.hoveredButtons.contains(aux) ) {
+        gb.hover = true;
+        /*if ( !this.hoveredButtons.contains(aux) ) {
           this.hoveredButtons.add(aux);
-        }
+        }*/
         break;
       }
     }
+  }
+}
+
+public void unhoverAll() {
+  for ( GRIDIButton gb : this.buttonList ) {
+    gb.hover = false;
   }
 }
 
@@ -245,6 +250,7 @@ void updateTuioObject (TuioObject tobj) {
 void removeTuioObject(TuioObject tobj) {
   if (verbose) println("del obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+")");
   this.master.removeFiducial(tobj.getSymbolID());
+  this.unhoverAll();
 }
 
 // --------------------------------------------------------------
