@@ -83,7 +83,7 @@ public class InstrumentsMaster {
     }
   }
   
-  private void onCollisionIsReadyToProduceSound(int id, int channel, int beat) {
+  public void onCollisionIsReadyToProduceSound(int id, int channel, int beat) {
     if ( this.waitingList.contains(new Fiducial(id)) ) {
       int index = this.waitingList.indexOf(new Fiducial(id));
       Fiducial f = this.waitingList.get(index);
@@ -98,6 +98,10 @@ public class InstrumentsMaster {
     }
   }
   
+  public boolean isFiducialMakingSound(int id)  {
+    return this.fiducialInColumn.containsKey(id);
+  }
+   
   public void removeFiducial(int id) {
     if ( this.waitingList.contains(new Fiducial(id)) ) {
       this.waitingList.remove(new Fiducial(id));

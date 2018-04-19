@@ -85,11 +85,10 @@ void drawGrid() {
   fill(179, 0, 179, 80);
   rect(this.currentTick*this.buttonWidth, 0, this.buttonWidth, height, 15);  
   for ( GRIDIButton b : this.buttonList ) {
-    //this.checkIfButtonIsHovered(b);
+    this.checkIfButtonIsHovered(b);
     b.draw();
   }
-  
-  
+    
 }
 
 void checkIfButtonIsHovered(GRIDIButton btn) {
@@ -199,7 +198,7 @@ void drawTuioObjects() {
         //println(gb.beat);
         this.master.onCollisionIsReadyToProduceSound(tobj.getSymbolID(), gb.channel, gb.beat);
         GRIDIButton aux = new GRIDIButton(gb.id);
-        gb.hover = true;
+        this.hoveredButtons.add(aux);
         /*if ( !this.hoveredButtons.contains(aux) ) {
           this.hoveredButtons.add(aux);
         }*/
