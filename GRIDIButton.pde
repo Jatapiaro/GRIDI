@@ -23,7 +23,8 @@ class GRIDIButton {
     this.beat = beat;
     this.channel = channel;
     this.initializeDimentions();
-    this.id = channel+"-"+beat;  
+    this.id = channel+"-"+beat;
+    
   }
   
   GRIDIButton( String id ) {

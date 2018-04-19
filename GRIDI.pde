@@ -10,6 +10,7 @@ GRIDIButton[][] buttons;
 List<GRIDIButton> buttonList;
 List<GRIDIButton> hoveredButtons;
 int buttonWidth, buttonHeight, beats, channels, currentTick;
+InstrumentsMaster master;
 
 /*
 * Reactivision stuff 
@@ -35,6 +36,7 @@ void setup() {
 }
 
 void variableSetup() {
+  this.master = new InstrumentsMaster();
   this.buttonList = new ArrayList<GRIDIButton>();
   this.hoveredButtons = new ArrayList<GRIDIButton>();
   this.currentTick = 0;
@@ -43,12 +45,13 @@ void variableSetup() {
   this.buttonWidth = width/16;
   this.buttonHeight = width/8;
   this.timer = CountdownTimerService.getNewCountdownTimer(this).configure(200, Integer.MAX_VALUE).start();
+  
 }
 
 void setupButtons() {
   buttons = new GRIDIButton[16][8];
   for (int y = 0; y < this.channels; y++) {
-    for (int x=0; x < this.beats; x++) {
+    for (int x = 0; x < this.beats; x++) {
       GRIDIButton b = new GRIDIButton(
         new PVector(x*buttonWidth, y*buttonHeight), 
         new PVector(buttonWidth, buttonHeight), 
@@ -109,6 +112,7 @@ void checkIfButtonIsHovered(GRIDIButton btn) {
 void onTickEvent(CountdownTimer t, long timeLeftUntilFinish) {
   this.currentTick++;
   this.currentTick %= this.beats;
+  this.master.play(this.currentTick);
 }
 
 
@@ -183,6 +187,9 @@ void drawTuioObjects() {
     float defX = (fiducialXPosition)-(obj_size/2);
     float fiducialYPosition = tobj.getScreenY(height);
     float defY = (fiducialYPosition)-(obj_size/2);
+    
+    this.master.updateFiducial(tobj.getSymbolID(), new PVector(defX, defY), tobj.getAngleDegrees(), this.currentTick);
+    
     GRIDIButton b = new GRIDIButton(
       new PVector(defX, defY),
       new PVector(defX+obj_size, obj_size),
@@ -191,11 +198,12 @@ void drawTuioObjects() {
     for ( GRIDIButton gb : this.buttonList ) {
       boolean res = gb.onCollisionEnter(b);
       if ( res ) {
+        //println(gb.beat);
+        this.master.onCollisionIsReadyToProduceSound(tobj.getSymbolID(), gb.channel, gb.beat);
         GRIDIButton aux = new GRIDIButton(gb.id);
-        if ( !this.hoveredButtons.contains(aux) ){
+        if ( !this.hoveredButtons.contains(aux) ) {
           this.hoveredButtons.add(aux);
         }
-        println(hoveredButtons);
         break;
       }
     }
@@ -210,22 +218,33 @@ void drawTuioObjects() {
 // called when an object is added to the scene
 void addTuioObject(TuioObject tobj) {
   if (verbose) println("add obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+") "+tobj.getX()+" "+tobj.getY()+" "+tobj.getAngle());
-  //this.master.addFiducial(tobj.getSymbolID());
+  float obj_size = object_size*scale_factor; 
+  float fiducialXPosition = tobj.getScreenX(width);
+  float defX = (fiducialXPosition)-(obj_size/2);
+  float fiducialYPosition = tobj.getScreenY(height);
+  float defY = (fiducialYPosition)-(obj_size/2);
+  //println(new PVector(defX, defY));
+  this.master.addFiducial(tobj.getSymbolID(), new PVector(defX, defY), tobj.getAngleDegrees(), this.currentTick);
 }
 
 // called when an object is moved
 void updateTuioObject (TuioObject tobj) {
   if (verbose) println("set obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+") "+tobj.getX()+" "+tobj.getY()+" "+tobj.getAngle()
           +" "+tobj.getMotionSpeed()+" "+tobj.getRotationSpeed()+" "+tobj.getMotionAccel()+" "+tobj.getRotationAccel());   
-          
-          //this.master.updateFiducial(tobj.getSymbolID(), tobj.getAngleDegrees());
+    float obj_size = object_size*scale_factor;        
+    float fiducialXPosition = tobj.getScreenX(width);
+    float defX = (fiducialXPosition)-(obj_size/2);
+    float fiducialYPosition = tobj.getScreenY(height);
+    float defY = (fiducialYPosition)-(obj_size/2);          
+    //int id, PVector position, float rotation, int tick
+    this.master.updateFiducial(tobj.getSymbolID(), new PVector(defX, defY) ,tobj.getAngleDegrees(), this.currentTick);
           
 }
 
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
   if (verbose) println("del obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+")");
-  //this.master.removeFiducial(tobj.getSymbolID());
+  this.master.removeFiducial(tobj.getSymbolID());
 }
 
 // --------------------------------------------------------------

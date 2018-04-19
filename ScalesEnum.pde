@@ -30,7 +30,6 @@ public enum ScalesEnum {
     private ScalesEnum(final int[] scale) {
         this.scale = scale;
     }
-    
 
     @Override
     public String toString() {
