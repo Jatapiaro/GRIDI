@@ -29,7 +29,7 @@ boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
 void setup() {
-  size(displayWidth, displayHeight);
+  size(displayWidth, displayHeight, P3D);
   this.variableSetup();
   this.setupButtons();
   this.tuioSetup();
@@ -181,7 +181,7 @@ void drawTuioObjects() {
     pushMatrix();
     {
       fill(255, 255, 255);
-      translate(tobj.getScreenX(width),tobj.getScreenY(height));
+      translate(tobj.getScreenX(width), tobj.getScreenY(height));
       rotate(tobj.getAngle());
       rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
     }
@@ -191,7 +191,8 @@ void drawTuioObjects() {
     text(
       ""+tobj.getSymbolID(), 
       tobj.getScreenX(width), 
-      tobj.getScreenY(height)
+      tobj.getScreenY(height),
+      10
       );
     textAlign(CENTER, BOTTOM);
     
