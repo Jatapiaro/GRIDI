@@ -9,6 +9,7 @@ CountdownTimer timer;
 GRIDIButton[][] buttons;
 List<GRIDIButton> buttonList;
 List<GRIDIButton> hoveredButtons;
+List<GRIDIButton> selectedButtons;
 int buttonWidth, buttonHeight, beats, channels, currentTick;
 InstrumentsMaster master;
 
@@ -39,13 +40,13 @@ void variableSetup() {
   this.master = new InstrumentsMaster();
   this.buttonList = new ArrayList<GRIDIButton>();
   this.hoveredButtons = new ArrayList<GRIDIButton>();
+  this.selectedButtons = new ArrayList<GRIDIButton>();
   this.currentTick = 0;
   this.beats = 16;
   this.channels = 8;
   this.buttonWidth = displayWidth/16;
   this.buttonHeight = displayHeight/8;
   this.timer = CountdownTimerService.getNewCountdownTimer(this).configure(200, Integer.MAX_VALUE).start();
-  
 }
 
 void setupButtons() {
@@ -66,6 +67,7 @@ void draw() {
   
   background(0);
   this.hoveredButtons.clear();
+  this.selectedButtons.clear();
   this.drawTuioObjects();
   this.drawGrid();
   
@@ -86,6 +88,7 @@ void drawGrid() {
   rect(this.currentTick*this.buttonWidth, 0, this.buttonWidth, height, 15);  
   for ( GRIDIButton b : this.buttonList ) {
     this.checkIfButtonIsHovered(b);
+    this.checkIfButtonIsSelected(b);
     b.draw();
   }
     
@@ -99,6 +102,19 @@ void checkIfButtonIsHovered(GRIDIButton btn) {
       break;
     } else {
       btn.hover = false;
+    }   
+  }
+  
+}
+
+void checkIfButtonIsSelected(GRIDIButton btn) {
+  
+  for ( GRIDIButton b : this.selectedButtons ) {
+    if ( btn.equals(b) ) {
+      btn.on = true;
+      break;
+    } else {
+      btn.on = false;
     }   
   }
   
@@ -195,13 +211,17 @@ void drawTuioObjects() {
     for ( GRIDIButton gb : this.buttonList ) {
       boolean res = gb.onCollisionEnter(b);
       if ( res ) {
-        //println(gb.beat);
         this.master.onCollisionIsReadyToProduceSound(tobj.getSymbolID(), gb.channel, gb.beat);
         GRIDIButton aux = new GRIDIButton(gb.id);
-        this.hoveredButtons.add(aux);
-        /*if ( !this.hoveredButtons.contains(aux) ) {
-          this.hoveredButtons.add(aux);
-        }*/
+        if ( this.master.isFiducialMakingSound(tobj.getSymbolID()) ) {
+          if ( !this.selectedButtons.contains(aux) ) {
+            this.selectedButtons.add(aux);
+          }      
+        } else {
+          if ( !this.hoveredButtons.contains(aux) ) {
+            this.hoveredButtons.add(aux);
+          }        
+        }
         break;
       }
     }
@@ -211,6 +231,7 @@ void drawTuioObjects() {
 public void unhoverAll() {
   for ( GRIDIButton gb : this.buttonList ) {
     gb.hover = false;
+    gb.on = false;
   }
 }
 
